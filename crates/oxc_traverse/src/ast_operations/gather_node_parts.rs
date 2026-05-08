@@ -235,7 +235,7 @@ impl<'a> GatherNodeParts<'a> for ChainElement<'a> {
         match self {
             ChainElement::CallExpression(expr) => expr.gather(f),
             ChainElement::TSNonNullExpression(expr) => expr.expression.gather(f),
-            expr => expr.to_member_expression().gather(f),
+            expr @ match_member_expression!(Self) => expr.to_member_expression().gather(f),
         }
     }
 }
