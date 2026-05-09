@@ -799,6 +799,7 @@ use crate::{
     AstNode,
     context::{ContextHost, LintContext},
     rule::{Rule, RuleCategory, RuleFixMeta, RuleMeta, RuleRunFunctionsImplemented, RuleRunner},
+    timing::RuleTimingStat,
     utils::PossibleJestNode,
 };
 use oxc_semantic::AstTypesBitset;
@@ -13670,8 +13671,13 @@ impl RuleEnum {
             Self::VueValidDefineProps(rule) => rule.to_configuration(),
         }
     }
-    pub(crate) fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
-        match self {
+    pub(crate) fn run<'a, const TIMINGS: bool>(
+        &self,
+        node: &AstNode<'a>,
+        ctx: &LintContext<'a>,
+        timing_stat: Option<&mut RuleTimingStat>,
+    ) {
+        let run = || match self {
             Self::ImportConsistentTypeSpecifierStyle(rule) => rule.run(node, ctx),
             Self::ImportDefault(rule) => rule.run(node, ctx),
             Self::ImportExport(rule) => rule.run(node, ctx),
@@ -14459,10 +14465,19 @@ impl RuleEnum {
             Self::VueReturnInComputedProperty(rule) => rule.run(node, ctx),
             Self::VueValidDefineEmits(rule) => rule.run(node, ctx),
             Self::VueValidDefineProps(rule) => rule.run(node, ctx),
+        };
+        if TIMINGS {
+            timing_stat.expect("missing rule timing stat").time(run);
+        } else {
+            run();
         }
     }
-    pub(crate) fn run_once(&self, ctx: &LintContext<'_>) {
-        match self {
+    pub(crate) fn run_once<const TIMINGS: bool>(
+        &self,
+        ctx: &LintContext<'_>,
+        timing_stat: Option<&mut RuleTimingStat>,
+    ) {
+        let run_once = || match self {
             Self::ImportConsistentTypeSpecifierStyle(rule) => rule.run_once(ctx),
             Self::ImportDefault(rule) => rule.run_once(ctx),
             Self::ImportExport(rule) => rule.run_once(ctx),
@@ -15250,14 +15265,20 @@ impl RuleEnum {
             Self::VueReturnInComputedProperty(rule) => rule.run_once(ctx),
             Self::VueValidDefineEmits(rule) => rule.run_once(ctx),
             Self::VueValidDefineProps(rule) => rule.run_once(ctx),
+        };
+        if TIMINGS {
+            timing_stat.expect("missing rule timing stat").time(run_once);
+        } else {
+            run_once();
         }
     }
-    pub(crate) fn run_on_jest_node<'a, 'c>(
+    pub(crate) fn run_on_jest_node<'a, 'c, const TIMINGS: bool>(
         &self,
         jest_node: &PossibleJestNode<'a, 'c>,
         ctx: &'c LintContext<'a>,
+        timing_stat: Option<&mut RuleTimingStat>,
     ) {
-        match self {
+        let run_on_jest_node = || match self {
             Self::ImportConsistentTypeSpecifierStyle(rule) => rule.run_on_jest_node(jest_node, ctx),
             Self::ImportDefault(rule) => rule.run_on_jest_node(jest_node, ctx),
             Self::ImportExport(rule) => rule.run_on_jest_node(jest_node, ctx),
@@ -16151,6 +16172,11 @@ impl RuleEnum {
             Self::VueReturnInComputedProperty(rule) => rule.run_on_jest_node(jest_node, ctx),
             Self::VueValidDefineEmits(rule) => rule.run_on_jest_node(jest_node, ctx),
             Self::VueValidDefineProps(rule) => rule.run_on_jest_node(jest_node, ctx),
+        };
+        if TIMINGS {
+            timing_stat.expect("missing rule timing stat").time(run_on_jest_node);
+        } else {
+            run_on_jest_node();
         }
     }
     pub(crate) fn should_run(&self, ctx: &ContextHost) -> bool {

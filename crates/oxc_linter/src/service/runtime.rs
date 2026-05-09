@@ -28,7 +28,7 @@ use oxc_span::{SourceType, VALID_EXTENSIONS};
 use oxc_str::CompactStr;
 
 use crate::{
-    Fixer, Linter, Message, PossibleFixes,
+    Fixer, Linter, Message, PossibleFixes, RuleTimingStore,
     context::{ContextSubHost, ContextSubHostOptions},
     disable_directives::DisableDirectives,
     loader::{JavaScriptSource, LINT_PARTIAL_LOADER_EXTENSIONS, PartialLoader},
@@ -590,6 +590,28 @@ impl Runtime {
         tx_error: &DiagnosticSender,
         diff_manager: &Arc<DiffManager>,
     ) {
+        self.run_impl::<false>(file_system, paths, tx_error, diff_manager, None);
+    }
+
+    pub(super) fn run_with_rule_timings(
+        &self,
+        file_system: &(dyn RuntimeFileSystem + Sync + Send),
+        paths: Vec<Arc<OsStr>>,
+        tx_error: &DiagnosticSender,
+        diff_manager: &Arc<DiffManager>,
+        rule_timing_store: &RuleTimingStore,
+    ) {
+        self.run_impl::<true>(file_system, paths, tx_error, diff_manager, Some(rule_timing_store));
+    }
+
+    fn run_impl<const TIMINGS: bool>(
+        &self,
+        file_system: &(dyn RuntimeFileSystem + Sync + Send),
+        paths: Vec<Arc<OsStr>>,
+        tx_error: &DiagnosticSender,
+        diff_manager: &Arc<DiffManager>,
+        rule_timing_store: Option<&RuleTimingStore>,
+    ) {
         self.modules_by_path.pin().reserve(paths.len());
         let paths_set: IndexSet<Arc<OsStr>, FxBuildHasher> = paths.into_iter().collect();
 
@@ -651,13 +673,22 @@ impl Runtime {
                             return;
                         }
 
-                        let (mut messages, disable_directives) =
+                        let (mut messages, disable_directives) = if TIMINGS {
+                            me.linter.run_with_disable_directives_and_rule_timings(
+                                path,
+                                context_sub_hosts,
+                                allocator_guard,
+                                me.js_allocator_pool(),
+                                rule_timing_store.expect("missing rule timing store"),
+                            )
+                        } else {
                             me.linter.run_with_disable_directives(
                                 path,
                                 context_sub_hosts,
                                 allocator_guard,
                                 me.js_allocator_pool(),
-                            );
+                            )
+                        };
 
                         // Store the disable directives for this file
                         if let Some(disable_directives) = disable_directives {

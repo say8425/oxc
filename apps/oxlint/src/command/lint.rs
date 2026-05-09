@@ -270,6 +270,10 @@ pub struct OutputOptions {
     /// `checkstyle`, `default`, `agent`, `github`, `gitlab`, `json`, `junit`, `sarif`, `stylish`, `unix`
     #[bpaf(long, short, fallback_with(default_output_format), hide_usage)]
     pub format: OutputFormat,
+
+    /// Print per-rule timing information after linting
+    #[bpaf(long("debug-timings"), switch, hide_usage)]
+    pub debug_timings: bool,
 }
 
 #[expect(clippy::unnecessary_wraps)]
@@ -558,6 +562,7 @@ mod lint_options {
         assert!(!options.fix_options.fix);
         assert!(!options.list_rules);
         assert_eq!(options.output_options.format, OutputFormat::Default);
+        assert!(!options.output_options.debug_timings);
     }
 
     #[test]
@@ -622,6 +627,13 @@ mod lint_options {
 
         let options = get_lint_options("-f agent");
         assert_eq!(options.output_options.format, OutputFormat::Agent);
+    }
+
+    #[test]
+    fn debug_timings() {
+        let options = get_lint_options("--debug-timings src");
+        assert!(options.output_options.debug_timings);
+        assert_eq!(options.paths, vec![PathBuf::from("src")]);
     }
 
     #[test]
