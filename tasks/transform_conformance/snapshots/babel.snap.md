@@ -1,6 +1,6 @@
 commit: 6402dbbf
 
-Passed: 692/1165
+Passed: 694/1165
 
 # All Passed:
 * babel-plugin-transform-logical-assignment-operators
@@ -966,7 +966,7 @@ rebuilt        : ["o"]
 x Output mismatch
 
 
-# babel-plugin-transform-object-rest-spread (28/40)
+# babel-plugin-transform-object-rest-spread (30/40)
 * object-rest/for-x/input.js
 x Output mismatch
 
@@ -984,52 +984,6 @@ x Output mismatch
 
 * object-rest/for-x-declaration-shadowed-block-scoped-bindings/input.js
 x Output mismatch
-
-* object-rest/nested-computed-key/input.js
-Bindings mismatch:
-after transform: ScopeId(0): ["_ref3", "a", "c"]
-rebuilt        : ScopeId(0): ["a", "c"]
-Reference symbol mismatch for "_ref3":
-after transform: SymbolId(6) "_ref3"
-rebuilt        : <None>
-Reference symbol mismatch for "_ref3":
-after transform: SymbolId(6) "_ref3"
-rebuilt        : <None>
-Reference symbol mismatch for "_ref3":
-after transform: SymbolId(6) "_ref3"
-rebuilt        : <None>
-Reference symbol mismatch for "_ref3":
-after transform: SymbolId(6) "_ref3"
-rebuilt        : <None>
-Reference symbol mismatch for "_ref3":
-after transform: SymbolId(6) "_ref3"
-rebuilt        : <None>
-Unresolved references mismatch:
-after transform: ["babelHelpers", "d"]
-rebuilt        : ["_ref3", "babelHelpers", "d"]
-
-* object-rest/nested-default-value/input.js
-Bindings mismatch:
-after transform: ScopeId(0): ["_ref3", "a", "c"]
-rebuilt        : ScopeId(0): ["a", "c"]
-Reference symbol mismatch for "_ref3":
-after transform: SymbolId(6) "_ref3"
-rebuilt        : <None>
-Reference symbol mismatch for "_ref3":
-after transform: SymbolId(6) "_ref3"
-rebuilt        : <None>
-Reference symbol mismatch for "_ref3":
-after transform: SymbolId(6) "_ref3"
-rebuilt        : <None>
-Reference symbol mismatch for "_ref3":
-after transform: SymbolId(6) "_ref3"
-rebuilt        : <None>
-Reference symbol mismatch for "_ref3":
-after transform: SymbolId(6) "_ref3"
-rebuilt        : <None>
-Unresolved references mismatch:
-after transform: ["babelHelpers", "d"]
-rebuilt        : ["_ref3", "babelHelpers", "d"]
 
 * object-rest/object-ref-computed/input.js
 x Output mismatch
@@ -2579,5 +2533,3 @@ transform-react-jsx-development: unknown field `sourceSelf`, expected one of `ru
 
 * cross-platform/within-ts-module-block/input.ts
 transform-react-jsx-development: unknown field `sourceSelf`, expected one of `runtime`, `development`, `throwIfNamespace`, `pure`, `importSource`, `pragma`, `pragmaFrag`, `useBuiltIns`, `useSpread`, `refresh`
-
-

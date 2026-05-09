@@ -1,6 +1,6 @@
 commit: 6402dbbf
 
-Passed: 229/377
+Passed: 231/379
 
 # All Passed:
 * babel-plugin-transform-class-static-block
@@ -1861,5 +1861,3 @@ x Output mismatch
 
 * styled-components/transpile-require-default/input.js
 x Output mismatch
-
-
