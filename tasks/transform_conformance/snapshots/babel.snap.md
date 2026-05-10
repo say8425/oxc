@@ -2533,3 +2533,5 @@ transform-react-jsx-development: unknown field `sourceSelf`, expected one of `ru
 
 * cross-platform/within-ts-module-block/input.ts
 transform-react-jsx-development: unknown field `sourceSelf`, expected one of `runtime`, `development`, `throwIfNamespace`, `pure`, `importSource`, `pragma`, `pragmaFrag`, `useBuiltIns`, `useSpread`, `refresh`
+
+
